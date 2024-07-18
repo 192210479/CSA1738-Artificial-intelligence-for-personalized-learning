@@ -1,0 +1,58 @@
+from collections import deque
+
+def water_jug_bfs(jug1_capacity, jug2_capacity, target):
+    # Initial state (0, 0)
+    start = (0, 0)
+    # Queue for BFS
+    queue = deque([start])
+    # Set to keep track of visited states
+    visited = set([start])
+    # Parent dictionary to reconstruct path
+    parent = {start: None}
+    
+    while queue:
+        current = queue.popleft()
+        
+        jug1, jug2 = current
+        
+        if jug1 == target or jug2 == target:
+            path = []
+            while current:
+                path.append(current)
+                current = parent[current]
+            path.reverse()
+            return path
+        
+        # Possible states
+        states = [
+            (jug1_capacity, jug2), # Fill Jug1
+            (jug1, jug2_capacity), # Fill Jug2
+            (0, jug2),             # Empty Jug1
+            (jug1, 0),             # Empty Jug2
+            # Pour Jug1 to Jug2
+            (max(jug1 - (jug2_capacity - jug2), 0), min(jug2 + jug1, jug2_capacity)),
+            # Pour Jug2 to Jug1
+            (min(jug1 + jug2, jug1_capacity), max(jug2 - (jug1_capacity - jug1), 0)),
+        ]
+        
+        for state in states:
+            if state not in visited:
+                queue.append(state)
+                visited.add(state)
+                parent[state] = current
+    
+    return None
+
+def print_solution(solution):
+    if solution:
+        for step in solution:
+            print(f"Jug1: {step[0]}, Jug2: {step[1]}")
+    else:
+        print("No solution found")
+
+# Example usage
+jug1_capacity = 4
+jug2_capacity = 3
+target = 2
+solution = water_jug_bfs(jug1_capacity, jug2_capacity, target)
+print_solution(solution)
