@@ -1,0 +1,35 @@
+import heapq
+
+def manhattan(board):
+    return sum(abs(b % 3 - g % 3) + abs(b // 3 - g // 3)
+               for b, g in ((board.index(i), i) for i in range(1, 9)))
+
+def astar(start):
+    goal = [1, 2, 3, 4, 5, 6, 7, 8, 0]
+    frontier = [(manhattan(start), 0, start, None)]
+    explored = {}
+    
+    while frontier:
+        _, g, state, path = heapq.heappop(frontier)
+        if state == goal:
+            return path + [state]
+        if tuple(state) in explored and explored[tuple(state)] <= g:
+            continue
+        explored[tuple(state)] = g
+        
+        z = state.index(0)
+        x, y = z // 3, z % 3
+        for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+            nx, ny = x + dx, y + dy
+            if 0 <= nx < 3 and 0 <= ny < 3:
+                n = nx * 3 + ny
+                new_state = state[:]
+                new_state[z], new_state[n] = new_state[n], new_state[z]
+                heapq.heappush(frontier, (g + 1 + manhattan(new_state), g + 1, new_state, path + [state] if path else [state]))
+
+start_board = [1, 2, 3, 4, 5, 6, 0, 7, 8]
+solution = astar(start_board)
+for step in solution:
+    for i in range(0, 9, 3):
+        print(step[i:i+3])
+    print()
