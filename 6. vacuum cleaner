@@ -1,0 +1,54 @@
+import random
+
+class VacuumCleaner:
+    def __init__(self, grid_size):
+        self.grid_size = grid_size
+        self.grid = [['dirty' for _ in range(grid_size)] for _ in range(grid_size)]
+        self.position = [0, 0]
+    
+    def display_grid(self):
+        for row in self.grid:
+            print(' '.join(row))
+        print()
+    
+    def is_clean(self):
+        for row in self.grid:
+            if 'dirty' in row:
+                return False
+        return True
+    
+    def clean(self):
+        x, y = self.position
+        if self.grid[x][y] == 'dirty':
+            self.grid[x][y] = 'clean'
+            print(f'Cleaned position ({x}, {y})')
+    
+    def move(self):
+        possible_moves = ['up', 'down', 'left', 'right']
+        move = random.choice(possible_moves)
+        
+        if move == 'up' and self.position[0] > 0:
+            self.position[0] -= 1
+        elif move == 'down' and self.position[0] < self.grid_size - 1:
+            self.position[0] += 1
+        elif move == 'left' and self.position[1] > 0:
+            self.position[1] -= 1
+        elif move == 'right' and self.position[1] < self.grid_size - 1:
+            self.position[1] += 1
+        
+        print(f'Moved {move} to position {self.position}')
+    
+    def run(self):
+        steps = 0
+        while not self.is_clean():
+            self.clean()
+            self.move()
+            steps += 1
+        print(f'Cleaning completed in {steps} steps!')
+
+# Example usage
+grid_size = 5
+vacuum_cleaner = VacuumCleaner(grid_size)
+vacuum_cleaner.display_grid()
+vacuum_cleaner.run()
+vacuum_cleaner.display_grid()
