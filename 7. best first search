@@ -1,0 +1,70 @@
+class GameTreeNode:
+    def __init__(self, state, is_max_player, value=None):
+        self.state = state
+        self.is_max_player = is_max_player
+        self.value = value
+        self.children = []
+
+    def add_child(self, child_node):
+        self.children.append(child_node)
+
+def alpha_beta_pruning(node, depth, alpha, beta):
+    if depth == 0 or not node.children:
+        return node.value
+    
+    if node.is_max_player:
+        max_eval = float('-inf')
+        for child in node.children:
+            eval = alpha_beta_pruning(child, depth - 1, alpha, beta)
+            max_eval = max(max_eval, eval)
+            alpha = max(alpha, eval)
+            if beta <= alpha:
+                break
+        return max_eval
+    else:
+        min_eval = float('inf')
+        for child in node.children:
+            eval = alpha_beta_pruning(child, depth - 1, alpha, beta)
+            min_eval = min(min_eval, eval)
+            beta = min(beta, eval)
+            if beta <= alpha:
+                break
+        return min_eval
+
+# Example usage
+if __name__ == "__main__":
+    # Create leaf nodes with values
+    leaf1 = GameTreeNode(state="Leaf1", is_max_player=False, value=3)
+    leaf2 = GameTreeNode(state="Leaf2", is_max_player=False, value=5)
+    leaf3 = GameTreeNode(state="Leaf3", is_max_player=False, value=6)
+    leaf4 = GameTreeNode(state="Leaf4", is_max_player=False, value=9)
+    leaf5 = GameTreeNode(state="Leaf5", is_max_player=False, value=1)
+    leaf6 = GameTreeNode(state="Leaf6", is_max_player=False, value=2)
+    leaf7 = GameTreeNode(state="Leaf7", is_max_player=False, value=0)
+
+    # Create internal nodes
+    internal1 = GameTreeNode(state="Internal1", is_max_player=True)
+    internal1.add_child(leaf1)
+    internal1.add_child(leaf2)
+
+    internal2 = GameTreeNode(state="Internal2", is_max_player=True)
+    internal2.add_child(leaf3)
+    internal2.add_child(leaf4)
+
+    internal3 = GameTreeNode(state="Internal3", is_max_player=True)
+    internal3.add_child(leaf5)
+    internal3.add_child(leaf6)
+
+    internal4 = GameTreeNode(state="Internal4", is_max_player=True)
+    internal4.add_child(leaf7)
+
+    # Create root node
+    root = GameTreeNode(state="Root", is_max_player=False)
+    root.add_child(internal1)
+    root.add_child(internal2)
+    root.add_child(internal3)
+    root.add_child(internal4)
+
+    # Run alpha-beta pruning algorithm
+    result = alpha_beta_pruning(root, depth=3, alpha=float('-inf'), beta=float('inf'))
+    print(f"The optimal value is: {result}")
